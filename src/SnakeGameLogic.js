@@ -11,7 +11,6 @@ function SnakeGameLogic() {
     {x: 0, y: 0},
   ];
 
-  this.direction = 'right';
   // 먹이의 좌표
   this.fruit = {x: 3, y: 5};
 }
@@ -38,11 +37,11 @@ SnakeGameLogic.prototype.right = function() {
 
 SnakeGameLogic.prototype.nextState = function() {
   console.log(`nextState`);
-
   // 한 번 움직여야 할 타이밍마다 실행되는 함수
   // 게임이 아직 끝나지 않았으면 `true`를 반환
   // 게임이 끝났으면 `false`를 반환
   let newHead;
+  let newFruit;
   if (this.direction === 'up') {
     newHead = {
       x: this.joints[0].x,
@@ -64,9 +63,20 @@ SnakeGameLogic.prototype.nextState = function() {
           y: this.joints[0].y
       }
   }
+  if (newHead.y >= ROWS || newHead.y < 0 || newHead.x >= COLS || newHead.x < 0 || this.joints.some(joint => joint.x === newHead.x && joint.y === newHead.y)) {
 
-  this.joints.pop();
+    return false;
+  }
+  if (!(newHead.x === this.fruit.x && newHead.y === this.fruit.y)) {
+    this.joints.pop();
+  } else {
+
+    newFruit = { x: Math.floor(Math.random() * COLS), y: Math.floor(Math.random() * ROWS) };
+    this.fruit = newFruit;
+  }
+
   this.joints.unshift(newHead);
+
   return true;
 }
 
